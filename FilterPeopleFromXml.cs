@@ -9,7 +9,7 @@ using System.Globalization;
 
 public class Question3
 {
-     private const string TURKISH_CULTURE_INFO_CODE = "tr-TR";
+    private const string TURKISH_CULTURE_INFO_CODE = "tr-TR";
     public static string FilterPeopleFromXml(string xmlData)
     {
         List<Person> personList;
@@ -28,14 +28,20 @@ public class Question3
 
         var tr = CultureInfo.GetCultureInfo(TURKISH_CULTURE_INFO_CODE);
 
-        List<string> names = personList.Select(person => person.Name).OrderBy(name => name, StringComparer.Create(tr, CompareOptions.IgnoreCase)).ToList();
+        PersonListReport report = GeneratePersonListReport(tr, personList);
+
+        return JsonSerializer.Serialize(report, new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
+    }
+
+    private static PersonListReport GeneratePersonListReport(CultureInfo cultureInfo, List<Person> personList)
+    {
+        List<string> names = personList.Select(person => person.Name).OrderBy(name => name, StringComparer.Create(cultureInfo, CompareOptions.IgnoreCase)).ToList();
         double totalSalary = personList.Sum(person => person.Salary);
         double maxSalary = personList.Max(person => person.Salary);
         int count = personList.Count;
         double avgSalary = totalSalary / count;
 
-        PersonListReport report = new PersonListReport(names, totalSalary, avgSalary, maxSalary, count);
-        return JsonSerializer.Serialize(report, new JsonSerializerOptions { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
+        return new PersonListReport(names, totalSalary, avgSalary, maxSalary, count);
     }
 
     private static List<Person> GetFilteredPeopleFromXmlData(string xmlData)
@@ -56,7 +62,7 @@ public class Question3
                                     }
                                 )
                                 .Where(obj => obj.Age > 30)
-                                .Where(obj => string.Equals(obj.Department, "IT", StringComparison.OrdinalIgnoreCase))
+                                .Where(obj => string.Equals(obj.Department.Trim(), "IT", StringComparison.OrdinalIgnoreCase))
                                 .Where(obj => obj.Salary > 5000.00)
                                 .Where(obj => obj.HireDate.Year < 2019)
                                 .Select(
