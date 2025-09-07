@@ -1,5 +1,8 @@
 # Pusula Talent Academy Assessment
 
+- Ad-Soyad: Batuhan Erol
+- Mail: bataer57@gmail.com
+
 **Bu repository Pusula Talent Academy için hazırlanmıştır.**
 
 - **main**  
